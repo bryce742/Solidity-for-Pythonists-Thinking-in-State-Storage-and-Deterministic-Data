@@ -61,9 +61,21 @@ coverage/
 out/
 broadcast/
 
-# keep this stuff private!
-.local/
 
+# Vim / Neovim swap files
+*.swp
+*.swo
+*.swx
+
+# macOS junk
+.DS_Store
+
+# Python (just in case)
+__pycache__/
+*.pyc
+
+# Env / local stuff
 .env
+local/
 
 
