@@ -183,6 +183,14 @@ Reason provided by the contract: "Not owner, Not allowed!".**
 
 
 
-# A note on setters and why we see '_' as a prefix for our function inputs, and during state variable assignment
+# Setter functions and why _ is used in variable names
+## Setter functions modify/update blockchain state based on parameters passed in
+- setName()
+- setFavoriteNumber()
 
+## Solidity programmers by convention add a '_' in front of parameter variables
+This allows us to easily distinguish between temporary variables and what's actually the state variable (and on chain)
 
+```solidity
+    stateVariable = _temporaryParamVariable
+```
