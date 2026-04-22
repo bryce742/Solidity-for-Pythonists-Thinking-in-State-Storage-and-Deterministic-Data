@@ -1,11 +1,5 @@
 # Getting Started with Remix IDE
 
-## Terminology
-- later
-
-
-
-
 ## The Basic Workflow:
 1. Create/open a .sol file
 2. Compile it
@@ -72,6 +66,7 @@ pragma solidity ^0.8.30; // use 0.8.30 or newer that doesn't break compatibility
 ```solidity
 pragma solidity >=0.8.0 <0.9.0; // uses any version 0.8 patch
 ```
+---
 
 # Our first solidity file
 in the file explorer tab...
@@ -86,15 +81,18 @@ contract VersionTest {
 }
 
 ```
-## This solidity file contains instructions for a contract (think class). This contract stores a state variable (of type uint and public) named x
+
+This solidity file contains instructions for a contract (think class). This contract currently stores a state variable (of type uint) named x. Since this variable's visibility is 'public', anyone can access it with a getter method once the contract is compile and deployed.
+
 
 3. Compiling the .sol file
-Now that we have a complete first_contract.sol file, go to the compiler tab (left hand side), choose the latest non-night compiler, and click compile
+Now that we have a complete first_contract.sol file, go to the compiler tab (left hand side), choose the latest non-night version for the compiler, and click compile.
 
-- a deployed contract is an instance created from compiled solidity/contract code
+Note that a compiled contract is not a deployed contract!
+
 
 ## The Solidity code is now compiled into bytecode/abi. Let's explore what happened!
-The compiler program takes in a solidity file, and outputs Bytecode and ABI 
+
 .sol file -- compiler --> Output (Bytecode and ABI)
 
 ### The Bytecode Output 
@@ -103,51 +101,58 @@ The compiler program takes in a solidity file, and outputs Bytecode and ABI
 - we never read/use/interact with this. The blockchain does so for us
 
 ### The ABI Output (Application Binary Interface)
-The ABI is what provides the **interface** for interacting with the **binary** code
+The ABI is what provides the **interface** for interacting with the **binary** code (that exists onchain after being deployed)
 
 The ABI provides a **structured description of the contract**, telling us:
 - what functions exist for it
 - the inputs/outputs for those functions
 - how to interact with the contract's functions
 
-It is basically a *menu of the contract*
-
 
 ### What does remix show us after we compiled the code?
-While still on the compiler tab, we will now see (on the left hand side) a drop down containing depployed contracts 
-- what we see is VersionTest (first_contract.sol)
-- the pattern is: contract_name (solidity_file_that_created_it)
-- you could see how compiling one solidity file could give us many many contracts! we will do this soon
+While still on the compiler tab, we will now see (on the left hand side) a drop down containing compiled contracts. This is where you'll see the VersionTest contract.
+
+---
+VersionTest (first_contract.sol)
+ContractName (sol_file_containing_contract.sol)
+---
 
 If you click the contract's compilation details, you'll see the ABI, Bytecode, compiler version, and warnings (if any)
-- you can see similar on etherscan! explore later
 
-# How the code actually worked
+If you have every been on etherscan (or any block explorer), some of the info in the ABI should look familiar!
+
+
+# Explaining the syntax and details
 ```solidity
 contract VersionTest {
     uint public x;
 }
 ```
-## The *contract* keyword allows us to define the blueprint for a contract (such as for a class: how to create an instance, what it contains, data, methods, etc.)
+## The *contract* keyword allowed us to define the blueprint for instances of this contract (similar to how we create a class in Python, which is a blueprint for instances/objects from that class)
 
-
+```solidity
 contract VersionTest  {
-    *definitions and data for the class*
+    *definitions and data for the class*;
 }
+```
 ~= 
+```python
 class VersionTest:
     *definitions and data for the class*
+```
 
 ## Declaring Variable type, visibility, and name
 ```solidity
-uint public x
+uint public x;
 ```
 
-Datatype for the var: uint (unsigned integer)  
-Visibility constraints for the var: public (visible/accessible outside the contract. think scope, look at more later)  
+Data type: uint (unsigned integer)  
+Visibility constraint: public (visible/accessible outside the contract. think scope, look at more later)  
 Var name: x
 
-### Creating a variable does much more under the hood!
+
+
+### Solidity !
 ```solidity
 uint public x;
 ```
@@ -158,19 +163,34 @@ function x() public view returns (uint) {
 }
 ```
 
+
 ### We didn't just write a variable, we also:
 - stored the state for it on the blockchain
-- had a variable getter function automatically created for us (by the ABI?)
+- had a variable getter function automatically created for us when it was compiled (with the getter method for it provided by the ABI)
+
+
 
 ### Syntax rules for variables
 #### Datatype declaration
-- dtype comes first (uint, etc.)
-thing uint x; ~ x = int()
+dtype comes first (uint, etc.)
+```solidity
+uint x; 
+```
+~= 
+```python
+x = int()
+```
+
+
+
+
+
 #### Visibility keywords
 - public: accessible outside the contract, getter method x() automatically created
+
 #### Semi-colons are required at the end of commands/declarations in solidity
 
-# Contracts contain state and functions
+# Contracts contain state variables and functions
 We actually created both even though it didn;t look like it! we have the state of x and the getter function x() that was auto-generated for it (under the hood)
 
 ## EVERYTHING exists inside of a contract.

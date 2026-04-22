@@ -10,7 +10,7 @@ In Solidity, some types require a **data location** to specify where the data li
 - address
 - bytes32
 
-## Reference typed variables require explicit data storage declaration
+## Reference-typed variables require explicit data storage declaration
 - string
 - bytes
 - arrays
