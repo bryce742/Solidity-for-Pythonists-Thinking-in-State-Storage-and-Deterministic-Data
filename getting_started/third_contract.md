@@ -17,7 +17,7 @@ In Solidity, some types require a **data location** to specify where the data li
 - structs
 - mappings
 
-The memory keyword explicitly tells solidity to temporarily store an actual copy of the data throughout the function's execution. (usually so that it can be used for setting a state variable onchain)
+The memory keyword explicitly tells solidity to temporarily store an actual copy of the data throughout the function's execution. (often so that it can be used for setting a state variable onchain)
 
 Notice how (in second_contract.sol) we only included the memory keyword when setting our function paramters, and not when we declared a string outside of the function!
 
@@ -31,73 +31,119 @@ Notice how (in second_contract.sol) we only included the memory keyword when set
 ```
 _newname is temporary stored into memory so that it can be used (in and during the lifetime of the function) to set the name state variable.
 
-Again, memory is temporary data that **exists only during the function call**. Value types do not require explicity memory declaration, while reference types do.
+Again, memory is temporary data that **exists only during the function call**. Value types do not require explicit memory declaration, while reference types do.
 
-## Three main data locations and keywords
-- storage: **permanent** on-chain storage
-- memory: **temporary** memory using to store data for reference variables during a function call
-- calldata (**read-only external input** data for EXTERNAL function calls. worry about later!)
+## Three main data locations
 
+| Location   | Lifetime   | Mutable | Used for                  |
+|------------|-----------|--------|----------------------------|
+| storage    | permanent | yes    | state variables            |
+| memory     | temporary | yes    | function variables         |
+| calldata   | temporary | no     | external function inputs   |
+---
 
-### State Variables are stored in storage by default because they live on chain!
-No need for a copy throughout the function call because we aleady have the data for the state variables stored and handy!
+```storage``` --> **permanent** on-chain storage
+- used for state-variables (which, of course, live forever onchain)
+- no 'storage' keyword needed. state-variables automatically use storage
+- storage = permanent state
 
-Remember that these state variables are declared inside of the contract, but outside of functions!
+```solidity
+string public name; // automatically stored in storage
 ```
-contract my_contract {
-    string public name; // no need for explicity memory declaration
-    uint256 public favoriteNumber;
-}
-
-```
-
-# Key Takeaways before Starting Contract 3:
-- value types never need a data location
-- reference types require a data location when they are in a function, but not if they are for a state vaariable
-- state variables are stored in storage automatically
 
 
-# third_contract.sol
-In this third contract, we will introduce:
-- mapping
-- require
-- using msg.sender as a key
-- view vs state-changing functions
-
-## Key features of this contract:
-- the contract has an **owner**
-- the conract has a **groupName**
-- only the owner can change the group name
-- different addresses can interact with it to store their favorite numbers
+```memory``` --> **temporary** memory used to store data (for reference-typed) variables during function execution
+- memory is for temporary copies of data
+- used inside of functions for non-state variables that are reference-typed
 
 
 
 ```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
-contract FavoriteNumbers {
-    //state variables
-    address public owner;
-    string public groupName;
-    mapping (address => uint256) public favoriteNumbers;
+string public name;
+uint256 public favNum;
 
-    //constructor
+function setProfile(string memory _newName, uint256 _newFavNum) {
+    string memory tempName = _newName; // a copy of a copy!
+    name = tempName;
 
-
-    //functions
+    favNum = _newFavNum;
 }
-
 ```
 
-### mapping (key_type => value_type) allows us to create a dictionary-like data structure that contains key/value pairs
+Again, **memory is used to store temporary copies of data during function execution**
+
+
+```calldata``` --> **read-only external input** 
+This area is used to store data for function parameters in EXTERNAL functions
+- more gas efficient!!
+
+
 ```solidity
-// favoriteNumbers is a 'dictionary' where the keys are an ethereum address and the values for those keys are a uint256 (for their favorite number)
-mapping (address => uint256) public favoriteNumbers;
-
-//setting a key/value pair
-favoriteNumbers[address var] = 3
-
-//accessing a key/value pair
-
+function setNameExternal(string calldata _newName) external {
+    name = _newName; //calldata storage --> state var storage
+}
 ```
+
+Again, **calldata is used to store read-only input from outside of the contract** (and therefore, function)
+
+
+## Data Visibility and keywords
+In solidity, visibility defines **who can access what variables and functions**
+### Main visibility types:
+- `public`
+- `private`
+- `internal`
+- `external`
+
+---
+
+#### Public Variables and Functions
+- accessible from outside the contract (anyone can call/get the state varialbe or function return)
+- automatically has a getter function created for it
+```solidity
+uint public x;
+```
+
+State-changing public function (anyone can call it, and change state!!)
+```solidity
+function setName(string memory _newName) public {
+    name = _newName;
+}
+```
+
+Read-Only public function
+```solidity
+function getName() public view returns (string) {
+    return name;
+}
+```
+
+#### Private Variables and Functions
+- only accessible inside the contract itself
+- the contract's functions may use it, but people cannot call a getter() function to get its value!
+- no other contracts can access it (even if the current contract inherits it!)
+
+```solidity
+uint private x;
+```
+
+#### Internal Variables and Functions
+- like private, accessible only inside of the contract
+- however, it CAN be accessed by inherited contracts
+- still no public getter function for a 'user'
+
+```solidity
+uint internal x;
+```
+
+#### External Variables and Functions
+- can ONLY be called outsid eof the contract
+- slightly more gas efficient than ```public``` for external calls
+
+```solidity
+uint external x = 5;
+```
+
+# third_contract.sol and its syntax
+
 
