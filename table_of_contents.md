@@ -24,3 +24,5 @@
 - using msg.sender as a 'key'
 - simulating different users storing different values in a single contract
 
+## Contract 5
+- `structs` as a way to create real-world like data types
