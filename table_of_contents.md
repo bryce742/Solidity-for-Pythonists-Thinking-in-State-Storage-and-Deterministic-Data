@@ -20,6 +20,7 @@
 - `msg` object data
 
 ## Contract 4
-- `mapping`
-- per-user state
-- msg.sender as a key
+- `mapping(key => value)`
+- using msg.sender as a 'key'
+- simulating different users storing different values in a single contract
+
